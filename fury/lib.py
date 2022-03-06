@@ -88,6 +88,7 @@ Follower = rcvtk.vtkFollower
 TextActor = rcvtk.vtkTextActor
 TextActor3D = rcvtk.vtkTextActor3D
 Property2D = rcvtk.vtkProperty2D
+Coordinate = rcvtk.vtkCoordinate
 
 ##############################################################
 #  vtkRenderingFreeType Module
@@ -117,6 +118,7 @@ InteractorStyleUser = isvtk.vtkInteractorStyleUser
 #  vtkFiltersCore Module
 CleanPolyData = fcvtk.vtkCleanPolyData
 PolyDataNormals = fcvtk.vtkPolyDataNormals
+AppendPolyData = fcvtk.vtkAppendPolyData
 ContourFilter = fcvtk.vtkContourFilter
 TubeFilter = fcvtk.vtkTubeFilter
 Glyph3D = fcvtk.vtkGlyph3D
@@ -147,6 +149,7 @@ CylinderSource = fsvtk.vtkCylinderSource
 ArrowSource = fsvtk.vtkArrowSource
 ConeSource = fsvtk.vtkConeSource
 DiskSource = fsvtk.vtkDiskSource
+LineSource = fsvtk.vtkLineSource
 TexturedSphereSource = fsvtk.vtkTexturedSphereSource
 RegularPolygonSource = fsvtk.vtkRegularPolygonSource
 

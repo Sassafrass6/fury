@@ -195,6 +195,43 @@ def test_ui_disk_2d():
     npt.assert_equal(report.objects, 0)
 
 
+def test_ui_line_2d():
+    window_size = (700, 700)
+    show_manager = window.ShowManager(size=window_size)
+
+    line = ui.Line2D(width=0.8)
+    line.assert_equal(line.width, 0.8)
+
+    line.p1 = (50, 80)
+    line.p2 = (70, 90)
+    npt.assert_equal(line.p1, (50, 80))
+    npt.assert_equal(line.p1, (70, 90))
+
+    line.color = (1, 0.5, 0)
+    npt.assert_equal(line.color, (1, 0.5, 0))
+
+    line.opacity = 0.5
+    npt.assert_equal(line.opacity, 0.5)
+
+    # Check the rectangle is drawn at right place.
+    show_manager.scene.add(line)
+    # Uncomment this to start the visualisation
+    # show_manager.start()
+
+    colors = [line.color]
+    arr = window.snapshot(show_manager.scene, size=window_size, offscreen=True)
+    report = window.analyze_snapshot(arr, colors=colors)
+    npt.assert_equal(report.objects, 1)
+    # Should be False because of the offscreen
+    npt.assert_equal(report.colors_found, [False])
+
+    # Test visibility off.
+    line.set_visibility(False)
+    arr = window.snapshot(show_manager.scene, size=window_size, offscreen=True)
+    report = window.analyze_snapshot(arr)
+    npt.assert_equal(report.objects, 0)
+
+
 def test_text_block_2d():
     text_block = ui.TextBlock2D()
 

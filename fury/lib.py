@@ -127,6 +127,7 @@ Glyph3D = fcvtk.vtkGlyph3D
 ##############################################################
 #  vtkFiltersGeneral Module
 SplineFilter = fgvtk.vtkSplineFilter
+MultiThreshold = fgvtk.vtkMultiThreshold
 TransformPolyDataFilter = fgvtk.vtkTransformPolyDataFilter
 
 ##############################################################
@@ -137,6 +138,7 @@ RenderLargeImage = fhvtk.vtkRenderLargeImage
 #  vtkFiltersModeling Module
 LoopSubdivisionFilter = fmvtk.vtkLoopSubdivisionFilter
 ButterflySubdivisionFilter = fmvtk.vtkButterflySubdivisionFilter
+SelectEnclosedPoints = fmvtk.vtkSelectEnclosedPoints
 OutlineFilter = fmvtk.vtkOutlineFilter
 
 ##############################################################
@@ -161,6 +163,7 @@ ImageData = cdmvtk.vtkImageData
 DataObject = cdmvtk.vtkDataObject
 CellArray = cdmvtk.vtkCellArray
 PolyVertex = cdmvtk.vtkPolyVertex
+Triangle = cdmvtk.vtkTriangle
 UnstructuredGrid = cdmvtk.vtkUnstructuredGrid
 Polygon = cdmvtk.vtkPolygon
 DataObject = cdmvtk.vtkDataObject

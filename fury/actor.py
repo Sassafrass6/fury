@@ -16,7 +16,7 @@ from fury.deprecator import deprecated_params, deprecate_with_version
 from fury.io import load_image
 from fury.lib import (numpy_support, Transform, ImageData, PolyData, Matrix4x4,
                       ImageReslice, ImageActor, CellPicker, OutlineFilter,
-                      Actor, PolyDataMapper, LookupTable, ImageMapToColors,
+                      Actor, Triangle, PolyDataMapper, LookupTable, ImageMapToColors,
                       Points, CleanPolyData, LoopSubdivisionFilter, TubeFilter,
                       ButterflySubdivisionFilter, ContourFilter, SplineFilter,
                       PolyDataNormals, Assembly, LODActor, VTK_UNSIGNED_CHAR,
@@ -24,9 +24,10 @@ from fury.lib import (numpy_support, Transform, ImageData, PolyData, Matrix4x4,
                       UnstructuredGrid, DataSetMapper, ConeSource, ArrowSource,
                       SphereSource, CylinderSource, DiskSource, TexturedSphereSource,
                       FlyingEdges3D, Texture, FloatArray, VTK_TEXT_LEFT, VTK_TEXT_RIGHT,
-                      VTK_TEXT_BOTTOM, VTK_TEXT_TOP, VTK_TEXT_CENTERED,
-                      TexturedActor2D, TextureMapToPlane, TextActor3D,
-                      Follower, VectorText)
+                      VTK_TEXT_BOTTOM, VTK_TEXT_TOP, VTK_TEXT_CENTERED, DataObject,
+                      TexturedActor2D, TextureMapToPlane, TextActor3D, MultiThreshold,
+                      Follower, VectorText, SelectEnclosedPoints)
+from fury.lib import Glyph3D
 import fury.primitive as fp
 from fury.utils import (lines_to_vtk_polydata, set_input, apply_affine,
                         set_polydata_vertices, set_polydata_triangles,
@@ -3061,7 +3062,7 @@ def markers(
 
     return sq_actor
 
-def iso_surface(data, iso_val, origin, color):
+def iso_surface(data, iso_val, origin, color, bound_polys=None):
 
     if data.ndim != 3:
         raise ValueError('Only 3D arrays are currently supported.')
@@ -3086,12 +3087,43 @@ def iso_surface(data, iso_val, origin, color):
     iso.SetInputData(im)
     iso.SetValue(0, iso_val)
 
-    mapper = PolyDataMapper()
-    mapper.SetInputConnection(iso.GetOutputPort())
-    mapper.ScalarVisibilityOff()
+    if bound_polys is None:
+        iso_map = PolyDataMapper()
+        iso_map.SetInputConnection(iso.GetOutputPort())
+        iso_map.ScalarVisibilityOff()
+
+    else:
+        points = Points()
+        for p in bound_polys[0]:
+            points.InsertNextPoint(*p)
+
+        tris = CellArray()
+        for vtx in bound_polys[1]:
+            t = Triangle()
+            for i,v in enumerate(vtx):
+                t.GetPointIds().SetId(i, v)
+            tris.InsertNextCell(t)
+
+        poly = PolyData()
+        poly.SetPoints(points)
+        poly.SetPolys(tris)
+
+        select = SelectEnclosedPoints()
+        select.SetInputConnection(iso.GetOutputPort())
+        select.SetSurfaceData(poly)
+
+        thresh = MultiThreshold()
+        inside = thresh.AddBandpassIntervalSet(1, 1, DataObject.FIELD_ASSOCIATION_POINTS, 'SelectedPoints', 0, 1)
+        thresh.SetInputConnection(select.GetOutputPort())
+        thresh.OutputSet(inside)
+        thresh.Update()
+
+        iso_map = DataSetMapper()
+        iso_map.SetInputData(thresh.GetOutput().GetBlock(inside).GetBlock(0))
+        iso_map.ScalarVisibilityOff()
 
     actor = Actor()
-    actor.SetMapper(mapper)
+    actor.SetMapper(iso_map)
     actor.GetProperty().SetColor(*color)
 
     return actor

@@ -120,6 +120,7 @@ CleanPolyData = fcvtk.vtkCleanPolyData
 PolyDataNormals = fcvtk.vtkPolyDataNormals
 AppendPolyData = fcvtk.vtkAppendPolyData
 ContourFilter = fcvtk.vtkContourFilter
+FlyingEdges3D = fcvtk.vtkFlyingEdges3D
 TubeFilter = fcvtk.vtkTubeFilter
 Glyph3D = fcvtk.vtkGlyph3D
 
